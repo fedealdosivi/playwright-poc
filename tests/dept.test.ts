@@ -1,10 +1,7 @@
-import test, { chromium } from "playwright/test";
+import test, { chromium, expect } from "playwright/test";
 
 test("Navigate through dept page", async() =>{
-    const browser = await chromium.launch({
-        headless: false,
-    }
-    );
+    const browser = await chromium.launch();
     const context = await browser.newContext();
     const page = await context.newPage();
 
@@ -23,6 +20,6 @@ test("Navigate through dept page", async() =>{
     } catch (error) {
         console.log('Unable to click on Careers link:', error);
     }
-
+    await expect(page).toHaveURL("https://www.deptagency.com/careers/")
     await browser.close();
 })
