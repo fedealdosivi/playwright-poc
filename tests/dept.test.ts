@@ -18,13 +18,11 @@ test("Navigate through dept page", async() =>{
     }
 
     try {
-        // You may need to use a different approach to locate the link, as `@innertext` is not a valid selector. Perhaps, you meant `text=Careers`.
         await page.waitForSelector("'Careers '", { state: 'visible', timeout: 5000 });
         await page.click("'Careers '");
     } catch (error) {
         console.log('Unable to click on Careers link:', error);
     }
 
-    // Finally, make sure to close the browser once your test is done
     await browser.close();
 })
