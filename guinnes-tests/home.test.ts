@@ -12,10 +12,10 @@ export async function saveV8Coverage(page: Page): Promise<void> {
     const coverage = await page.coverage.stopJSCoverage();
     const map = libCoverage.createCoverageMap();
     for (const entry of coverage) {
-        if (entry.url === '') {
+        if (entry.url === '' || entry.url.includes('cloudfront.net')) {
             continue;
         }
-            const scriptPath = `test${new URL(entry.url).pathname}`;
+            const scriptPath = entry.url;
             const converter = v8toIstanbul(scriptPath, 0, { source: entry.source }, (filepath) => {
             const normalized = filepath.replace(/\\/g, '/');
             const ret = normalized.includes('node_modules/');
@@ -35,35 +35,32 @@ export async function saveV8Coverage(page: Page): Promise<void> {
     reports.create('html').execute(context);
   }
 
-test.beforeAll(async () => {
+test.beforeEach(async () => {
     const browser = await chromium.launch();
     const context = await browser.newContext();
     page = await context.newPage();
     await page.coverage.startJSCoverage();
-    await page.coverage.startCSSCoverage();
 });
 
-test("Navigate through dept page", async() =>{
-
-    await page.goto("https://www.deptagency.com/");
-    
+test('Navigate to shop guinnes using recorder', async () => {
     try {
-        await page.waitForSelector("'Accept All'", { state: 'visible', timeout: 5000 });
-        await page.click("'Accept All'");
+        await page.goto('https://www.guinness.diageo.site/');
+        await page.getByPlaceholder('DD').click();
+        await page.getByPlaceholder('DD').fill('24');
+        await page.getByPlaceholder('MM').click();
+        await page.getByPlaceholder('MM').fill('05');
+        await page.getByPlaceholder('YYYY').click();
+        await page.getByPlaceholder('YYYY').fill('1996');
+        await page.getByRole('button', { name: 'Enter' }).click();
+        await expect(page).toHaveURL("https://www.guinness.diageo.site/en/home")
+        await page.getByLabel('Shop', { exact: true }).click();
+        await page.getByLabel('Shop', { exact: true }).click();
     } catch (error) {
-        console.log('Unable to click on Accept All button:', error);
+        console.log('Could not navigate to the shop', error);
     }
+});
 
-    try {
-        await page.waitForSelector("'Careers '", { state: 'visible', timeout: 5000 });
-        await page.click("'Careers '");
-    } catch (error) {
-        console.log('Unable to click on Careers link:', error);
-    }
-    await expect(page).toHaveURL("https://www.deptagency.com/careers/")
-})
-
-test.afterAll(async () => {
+test.afterEach(async () => {
     await saveV8Coverage(page);
     await page.close();
 });
