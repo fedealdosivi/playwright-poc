@@ -60,6 +60,22 @@ test('Navigate to shop guinnes using recorder', async () => {
     }
 });
 
+test('test', async ({ page }) => {
+    await page.goto('https://www.guinness.diageo.site/');
+    await page.getByPlaceholder('DD').click();
+    await page.getByPlaceholder('DD').fill('24');
+    await page.getByPlaceholder('MM').click();
+    await page.getByPlaceholder('MM').fill('05');
+    await page.getByPlaceholder('YYYY').click();
+    await page.getByPlaceholder('YYYY').fill('1996');
+    await page.getByRole('button', { name: 'Enter' }).click();
+    await page.locator('.cursor-pointer.flex.items-center.justify-center.py-4').click();
+    await page.getByRole('link', { name: 'View More' }).click();
+    const page1Promise = page.waitForEvent('popup');
+    await page.getByRole('link', { name: 'DISCOVER DISCOVER DISCOVER The Guinness Archive is home to the history, culture and memory of Guinness from 1759 to the present day. The story of Guinness is a living ...' }).click();
+    const page1 = await page1Promise;
+  });
+
 test.afterEach(async () => {
     await saveV8Coverage(page);
     await page.close();
