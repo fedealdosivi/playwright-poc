@@ -60,7 +60,7 @@ test('Navigate to shop guinnes using recorder', async () => {
     }
 });
 
-test('test', async ({ page }) => {
+test('Validate user can view more items in the search bar', async ({ page }) => {
     await page.goto('https://www.guinness.diageo.site/');
     await page.getByPlaceholder('DD').click();
     await page.getByPlaceholder('DD').fill('24');
@@ -74,6 +74,23 @@ test('test', async ({ page }) => {
     const page1Promise = page.waitForEvent('popup');
     await page.getByRole('link', { name: 'DISCOVER DISCOVER DISCOVER The Guinness Archive is home to the history, culture and memory of Guinness from 1759 to the present day. The story of Guinness is a living ...' }).click();
     const page1 = await page1Promise;
+  });
+
+  test('Navigate to beers section and validate you are able to buy one of the products', async ({ page }) => {
+    await page.goto('https://www.guinness.diageo.site/en/home');
+    await page.getByPlaceholder('DD').click();
+    await page.getByPlaceholder('DD').fill('24');
+    await page.getByPlaceholder('MM').click();
+    await page.getByPlaceholder('MM').fill('05');
+    await page.getByPlaceholder('MM').press('Tab');
+    await page.getByPlaceholder('YYYY').fill('1996');
+    await page.getByRole('button', { name: 'Enter' }).click();
+    await page.getByLabel('Menu Icon').click();
+    await page.getByRole('navigation').getByRole('link', { name: 'BEERS' }).click();
+    await page.locator('section').filter({ hasText: 'FEATURED BEERGUINNESS DRAUGHTTHERE’S NOTHING ON THIS PLANET LIKE A PINT OF THE B' }).getByRole('button').click();
+    await page.locator('[aria-label="BUY NOW"]').hover();
+    await page.locator('[aria-label="BUY NOW"]').click();
+    await expect(page.getByText('Retailer Product Stock Price Buy Now There are no available retailers')).toBeVisible();
   });
 
 test.afterEach(async () => {
