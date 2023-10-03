@@ -31,8 +31,10 @@ export async function saveV8Coverage(page: Page): Promise<void> {
         }
     }
     await fs.rm('coverage', { force: true, recursive: true });
+    
     const context = libReport.createContext({ coverageMap: map });
     reports.create('html').execute(context);
+    reports.create('lcovonly').execute(context);
   }
 
 test.beforeEach(async () => {
