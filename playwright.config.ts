@@ -20,6 +20,7 @@ export default defineConfig({
     trace: 'on-first-retry',
     actionTimeout: 30000,
     navigationTimeout: 30000,
+    ignoreHTTPSErrors: true,
   },
   projects: [
     {
